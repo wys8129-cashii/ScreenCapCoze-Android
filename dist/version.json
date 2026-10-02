@@ -1,0 +1,6 @@
+{
+  "versionCode": 6,
+  "versionName": "1.6",
+  "apkUrl": "https://github.com/wys8129-cashii/ScreenCapCoze-Android/releases/download/v1.6/ScreenCapCoze-v1.6.apk",
+  "notes": "新增应用内更新：启动自动检查、应用内下载安装，更新后配置与登录状态保留。修复截图重复上传问题。"
+}

@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">截图上传</string>
+    <string name="tile_label">截图上传</string>
+    <string name="settings_title">设置</string>
+    <string name="coze_access_token_hint">Access Token (PAT)</string>
+    <string name="coze_user_hint">用户名称（邮箱）</string>
+    <string name="pref_coze_access_token">coze_access_token</string>
+    <string name="pref_category_coze">Coze API 配置</string>
+    <string name="btn_save">保存</string>
+    <string name="btn_authorize">授权截图权限</string>
+    <string name="btn_open_settings">打开设置</string>
+    <string name="btn_add_tile">添加到控制中心</string>
+    <string name="status_ready">状态：就绪</string>
+    <string name="status_capturing">状态：截图中…</string>
+    <string name="status_uploading">状态：上传中…</string>
+    <string name="status_done">状态：已完成</string>
+    <string name="status_error">状态：出错</string>
+    <string name="notification_channel_name">截图上传服务</string>
+    <string name="notification_title">截图上传</string>
+    <string name="notification_capturing">正在截图…</string>
+    <string name="notification_uploading">正在上传到 Coze…</string>
+    <string name="notification_done">截图已上传到 Coze</string>
+    <string name="notification_error">上传失败</string>
+    <string name="default_coze_api_url">https://api.coze.cn</string>
+</resources>

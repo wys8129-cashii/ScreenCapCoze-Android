@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark mode overrides -->
+    <color name="bg_gradient_start">#0F172A</color>
+    <color name="bg_gradient_end">#1E1B4B</color>
+    <color name="surface_light">#1E293B</color>
+    <color name="surface_variant_light">#334155</color>
+    <color name="brand_primary_container">#312E81</color>
+    <color name="brand_on_primary_container">#E0E7FF</color>
+    <color name="brand_secondary_container">#134E4A</color>
+    <color name="text_primary">#F1F5F9</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="text_hint">#64748B</color>
+    <color name="card_stroke">#334155</color>
+</resources>
