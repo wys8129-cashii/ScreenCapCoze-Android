@@ -22,4 +22,17 @@
     <string name="notification_done">截图已上传到 Coze</string>
     <string name="notification_error">上传失败</string>
     <string name="default_coze_api_url">https://api.coze.cn</string>
+
+    <!-- 截图备注 -->
+    <string name="notes_label">截图备注（可选）</string>
+    <string name="notes_hint">可填写备注，随截图一起上传到 Coze，多行</string>
+
+    <!-- 分享撰写页 -->
+    <string name="share_compose_title">添加备注并上传</string>
+    <string name="btn_upload">上传截图</string>
+    <string name="btn_cancel">取消</string>
+
+    <!-- 门户网址 -->
+    <string name="portal_label">管理后台</string>
+    <string name="portal_url">https://sm42ps27mabdnv01fac5a.apigateway-cn-shanghai.volceapi.com/login.html</string>
 </resources>

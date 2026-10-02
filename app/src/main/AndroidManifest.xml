@@ -37,11 +37,6 @@
                 <action android:name="com.personal.screencapcoze.FROM_TILE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
-            </intent-filter>
         </activity>
 
         <!-- 设置 Activity -->
@@ -50,6 +45,19 @@
             android:exported="false"
             android:label="@string/settings_title"
             android:theme="@style/Theme.ScreenCapCoze" />
+
+        <!-- 分享撰写页：接收系统分享的图片，可填备注后上传 -->
+        <activity
+            android:name=".ShareComposeActivity"
+            android:exported="true"
+            android:label="@string/share_compose_title"
+            android:theme="@style/Theme.ScreenCapCoze">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
 
         <!-- 快捷设置 Tile：下拉控制中心按钮 -->
         <service

@@ -54,7 +54,7 @@ class CozeUploader(
      * 2. 调用 POST /v1/workflow/stream_run
      * 3. 读取流式响应（SSE 格式）
      */
-    suspend fun uploadImage(jpegBytes: ByteArray): UploadResult = withContext(Dispatchers.IO) {
+    suspend fun uploadImage(jpegBytes: ByteArray, notes: String = ""): UploadResult = withContext(Dispatchers.IO) {
         try {
             // Step 1: 转为 base64
             Log.d(TAG, "Converting ${jpegBytes.size} bytes JPEG to base64...")
@@ -66,7 +66,9 @@ class CozeUploader(
             // 手动构建 JSON，避免引入额外 JSON 库
             // 注意：base64 字符串中不含特殊字符，可以直接拼接到 JSON 字符串中
             // user 同时放在顶层（API 要求）和 parameters 里（workflow 参数要求）
-            val jsonBody = """{"workflow_id":"$WORKFLOW_ID","app_id":"$APP_ID","user":"$user","parameters":{"screenshot":"$screenshotParam","user":"$user"}}"""
+            // notes 是用户自由输入的备注，需先转义避免破坏 JSON 结构（引号/换行/反斜杠）
+            val escapedNotes = jsonEscape(notes)
+            val jsonBody = """{"workflow_id":"$WORKFLOW_ID","app_id":"$APP_ID","user":"$user","parameters":{"screenshot":"$screenshotParam","user":"$user","notes":"$escapedNotes"}}"""
 
             Log.d(TAG, "Calling workflow API: ${API_URL}$ENDPOINT")
             Log.d(TAG, "Request body size: ${jsonBody.length} chars")
@@ -154,5 +156,23 @@ class CozeUploader(
         }
 
         return null
+    }
+
+    /**
+     * 对字符串做 JSON 字符串转义，防止备注中的引号、反斜杠、换行等破坏 JSON 结构。
+     */
+    private fun jsonEscape(value: String): String {
+        val sb = StringBuilder(value.length)
+        for (c in value) {
+            when (c) {
+                '"' -> sb.append("\\\"")
+                '\\' -> sb.append("\\\\")
+                '\n' -> sb.append("\\n")
+                '\r' -> sb.append("\\r")
+                '\t' -> sb.append("\\t")
+                else -> sb.append(c)
+            }
+        }
+        return sb.toString()
     }
 }

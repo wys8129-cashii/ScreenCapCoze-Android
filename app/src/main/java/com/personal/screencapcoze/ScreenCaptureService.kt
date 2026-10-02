@@ -44,17 +44,19 @@ class ScreenCaptureService : Service() {
         const val ACTION_START_CAPTURE = "com.personal.screencapcoze.START_CAPTURE"
         const val EXTRA_RESULT_CODE = "result_code"
         const val EXTRA_RESULT_DATA = "result_data"
+        const val EXTRA_NOTES = "notes"
 
         /** 通知 MainActivity 截图已完成 */
         const val ACTION_CAPTURE_DONE = "com.personal.screencapcoze.CAPTURE_DONE"
         const val EXTRA_SUCCESS = "success"
         const val EXTRA_ERROR_MSG = "error_msg"
 
-        fun startCapture(context: Context, resultCode: Int, resultData: Intent) {
+        fun startCapture(context: Context, resultCode: Int, resultData: Intent, notes: String = "") {
             val intent = Intent(context, ScreenCaptureService::class.java).apply {
                 action = ACTION_START_CAPTURE
                 putExtra(EXTRA_RESULT_CODE, resultCode)
                 putExtra(EXTRA_RESULT_DATA, resultData)
+                putExtra(EXTRA_NOTES, notes)
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
@@ -89,6 +91,7 @@ class ScreenCaptureService : Service() {
                 @Suppress("DEPRECATION")
                 intent.getParcelableExtra(EXTRA_RESULT_DATA)
             }
+            val notes = intent.getStringExtra(EXTRA_NOTES) ?: ""
 
             if (resultCode == 0 || resultData == null) {
                 Log.e(TAG, "Invalid MediaProjection authorization")
@@ -103,7 +106,7 @@ class ScreenCaptureService : Service() {
             // 开始截图流程
             serviceScope.launch {
                 try {
-                    captureAndUpload(resultCode, resultData)
+                    captureAndUpload(resultCode, resultData, notes)
                 } catch (e: Exception) {
                     Log.e(TAG, "Capture failed", e)
                     notifyError(e.message ?: "未知错误")
@@ -126,8 +129,10 @@ class ScreenCaptureService : Service() {
 
     /**
      * 截图并上传的核心流程
+     *
+     * @param notes 用户填写的备注，随截图一起作为 workflow 参数上传（可选）
      */
-    private suspend fun captureAndUpload(resultCode: Int, resultData: Intent) {
+    private suspend fun captureAndUpload(resultCode: Int, resultData: Intent, notes: String = "") {
         // Step 1: 获取 MediaProjection
         val projectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         mediaProjection = projectionManager.getMediaProjection(resultCode, resultData)
@@ -202,7 +207,7 @@ class ScreenCaptureService : Service() {
         }
 
         val uploader = CozeUploader(accessToken, user)
-        val result = uploader.uploadImage(jpegBytes)
+        val result = uploader.uploadImage(jpegBytes, notes)
 
         if (result.isSuccess) {
             Log.d(TAG, "Upload successful! Response: ${result.responseText?.take(500)}")
