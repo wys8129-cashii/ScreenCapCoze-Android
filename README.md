@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ScreenCapCoze - 截图上传到 Coze
 
 一个轻量级 Android App，在下拉控制中心添加快捷按钮，点击后自动截图并发送到 Coze API。
@@ -181,3 +182,7 @@ val messageContent = """{
 ## License
 
 个人使用项目，无特殊 License 要求。
+=======
+# ScreenCapCoze-Android
+安卓设备截屏采集 App
+>>>>>>> 894b3a850f7e4a64d0f372c7f2822aff1ad8eeb1
