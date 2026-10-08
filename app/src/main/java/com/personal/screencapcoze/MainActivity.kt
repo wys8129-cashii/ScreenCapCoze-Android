@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvStatus: TextView
     private lateinit var tvResult: TextView
     private lateinit var btnTestCapture: MaterialButton
-    private lateinit var etNotes: EditText
     private lateinit var mediaProjectionManager: MediaProjectionManager
 
     // 监听系统截图
@@ -121,20 +120,8 @@ class MainActivity : AppCompatActivity() {
         btnCheckUpdate.text = "检查更新 · 当前 v${Updater.currentVersionName(this)}"
         btnCheckUpdate.setOnClickListener { checkForUpdate(manual = true) }
 
-        // 备注输入框：持久化，上传时随截图一起发送到 Coze（可选，留空则不发送）
-        etNotes = findViewById(R.id.etNotes)
-        val notePrefs = getSharedPreferences("coze_config", Context.MODE_PRIVATE)
-        etNotes.setText(notePrefs.getString("standing_notes", ""))
-        etNotes.addTextChangedListener(object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: android.text.Editable?) {
-                notePrefs.edit().putString("standing_notes", s?.toString()?.trim() ?: "").apply()
-            }
-        })
-
-        // 门户网址：点击在浏览器中打开
-        findViewById<android.view.View>(R.id.cardPortal).setOnClickListener {
+        // 管理后台入口（使用指南第 6 步）：点击在浏览器打开，不展示原链接
+        findViewById<MaterialButton>(R.id.btnOpenPortal).setOnClickListener {
             val url = getString(R.string.portal_url)
             try {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
@@ -307,8 +294,8 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "MediaProjection authorized")
                 tvStatus.text = getString(R.string.status_capturing)
 
-                // 启动截图服务，并把备注一并带过去
-                ScreenCaptureService.startCapture(this, resultCode, data, etNotes.text.toString().trim())
+                // 启动截图服务（备注改为上传完成后在备注页填写）
+                ScreenCaptureService.startCapture(this, resultCode, data)
             } else {
                 Log.d(TAG, "MediaProjection denied")
                 tvStatus.text = getString(R.string.status_error)

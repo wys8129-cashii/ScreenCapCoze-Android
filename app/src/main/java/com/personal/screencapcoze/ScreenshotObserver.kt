@@ -3,7 +3,6 @@ package com.personal.screencapcoze
 import android.content.Context
 import android.database.ContentObserver
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
@@ -15,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.io.ByteArrayOutputStream
 
 /**
  * 系统截图监听器
@@ -138,15 +136,24 @@ class ScreenshotObserver(
                 return
             }
 
-            // 如果是 PNG，先转为 JPEG 以减小体积
-            val jpegBytes = if (bytes.size >= 8 &&
-                bytes[0] == 0x89.toByte() && bytes[1] == 0x50.toByte()) {
-                convertPngToJpeg(bytes)
+            // 统一解码后交给 ImageCompressor 压缩到 1MB 以下：
+            // PNG 转 JPEG、JPEG 原图也都走压缩，避免高分屏原图体积过大。
+            val bmp = ImageCompressor.decode(bytes)
+            val jpegBytes = if (bmp != null) {
+                val j = ImageCompressor.compress(bmp)
+                bmp.recycle()
+                j
             } else {
                 bytes
             }
 
-            Log.d(TAG, "Screenshot size: ${bytes.size} bytes, JPEG size: ${jpegBytes.size} bytes")
+            Log.d(TAG, "Screenshot size: ${bytes.size} bytes, JPEG size: ${jpegBytes.size} bytes (<= ${ImageCompressor.MAX_BYTES})")
+
+            // 保存预览图到私有缓存，供备注页展示
+            val previewUri = PreviewCache.save(context, jpegBytes)
+
+            // 截图后立刻弹出备注页（后台上传期间可填备注）
+            NoteActivity.start(context, previewUri?.toString())
 
             val prefs = context.getSharedPreferences("coze_config", Context.MODE_PRIVATE)
             val token = prefs.getString("coze_access_token", "") ?: ""
@@ -161,22 +168,13 @@ class ScreenshotObserver(
 
             if (result.isSuccess) {
                 Log.d(TAG, "Screenshot uploaded successfully")
+                NoteCoordinator.onUploadSuccess(context, result.title ?: "")
             } else {
                 Log.e(TAG, "Upload failed: ${result.errorMessage}")
+                NoteCoordinator.onUploadFailed(context)
             }
         } catch (e: Exception) {
             Log.e(TAG, "Upload screenshot exception", e)
         }
-    }
-
-    /**
-     * PNG -> JPEG 转换
-     */
-    private fun convertPngToJpeg(pngBytes: ByteArray): ByteArray {
-        val bitmap = BitmapFactory.decodeByteArray(pngBytes, 0, pngBytes.size)
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
-        bitmap.recycle()
-        return stream.toByteArray()
     }
 }

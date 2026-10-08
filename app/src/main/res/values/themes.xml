@@ -11,4 +11,12 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
+
+    <!-- 透明主题：用于分享中转页，避免闪现上传界面；继承项目主主题（AppCompat 兼容） -->
+    <style name="Theme.ScreenCapCoze.Transparent" parent="Theme.ScreenCapCoze">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
 </resources>

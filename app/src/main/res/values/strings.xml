@@ -23,14 +23,33 @@
     <string name="notification_error">上传失败</string>
     <string name="default_coze_api_url">https://api.coze.cn</string>
 
-    <!-- 截图备注 -->
+    <!-- 截图备注（首页/分享页已弃用，备注改为上传后填写） -->
     <string name="notes_label">截图备注（可选）</string>
     <string name="notes_hint">可填写备注，随截图一起上传到 Coze，多行</string>
+
+    <!-- 备注页（上传完成后填写并保存到第二个工作流） -->
+    <string name="note_label">备注（可选）</string>
+    <string name="note_uploading_hint">截图正在上传中</string>
+    <string name="note_hint">如需备注，请输入并点击【完成】保存</string>
+    <string name="btn_done">完成</string>
+    <string name="btn_skip">跳过</string>
+    <string name="note_status_saving">正在保存备注…</string>
+    <string name="note_status_saved">备注已保存</string>
+    <string name="note_status_failed">备注保存失败</string>
 
     <!-- 分享撰写页 -->
     <string name="share_compose_title">添加备注并上传</string>
     <string name="btn_upload">上传截图</string>
     <string name="btn_cancel">取消</string>
+
+    <!-- 使用指南内嵌按钮 -->
+    <string name="guide_step1">1. 配置邮箱和 Token</string>
+    <string name="guide_step2">2. 获取系统截图授权</string>
+    <string name="guide_step3">3. 将按钮加入控制中心</string>
+    <string name="guide_step4">4. 下拉控制中心 → 点击「截图上传」即可</string>
+    <string name="guide_step5">5. 可选：验证 API 连通性</string>
+    <string name="guide_step6">6. 查看已上传的截图记录</string>
+    <string name="btn_open_portal">打开管理后台</string>
 
     <!-- 门户网址 -->
     <string name="portal_label">管理后台</string>

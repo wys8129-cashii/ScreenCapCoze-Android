@@ -4,4 +4,7 @@
     <external-files-path name="updates" path="updates/" />
     <external-cache-path name="updates_ext_cache" path="updates/" />
     <cache-path name="updates_cache" path="updates/" />
+
+    <!-- 备注页截图预览缓存 -->
+    <cache-path name="previews" path="previews/" />
 </paths>

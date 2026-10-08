@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="24dp"
+        android:gravity="center_horizontal">
+
+        <!-- 标题 -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="为本次截图添加备注"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:letterSpacing="0.04"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 截图预览（可选） -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp">
+
+            <ImageView
+                android:id="@+id/ivPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="@drawable/card_settings_bg"
+                android:contentDescription="截图预览"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <!-- 上传状态提示（位于输入框外） -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/note_uploading_hint"
+            android:textSize="13sp"
+            android:textColor="@color/brand_primary"
+            android:letterSpacing="0.02"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 备注卡片 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_settings_bg"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/note_label"
+                android:textSize="11sp"
+                android:textColor="@color/text_hint"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/etNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minLines="4"
+                android:gravity="top|start"
+                android:inputType="textMultiLine|textCapSentences"
+                android:background="@null"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                android:hint="@string/note_hint"
+                android:lineSpacingMultiplier="1.3" />
+        </LinearLayout>
+
+        <!-- 状态 -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary"
+            android:lineSpacingMultiplier="1.3"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 完成按钮 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDone"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="@string/btn_done"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.04"
+            app:cornerRadius="14dp"
+            app:backgroundTint="@color/brand_primary"
+            android:layout_marginBottom="10dp" />
+
+        <!-- 跳过按钮 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSkip"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="@string/btn_skip"
+            android:textSize="14sp"
+            android:letterSpacing="0.02"
+            android:textColor="@color/brand_secondary"
+            app:cornerRadius="14dp"
+            app:strokeColor="@color/brand_secondary"
+            app:strokeWidth="1.5dp" />
+
+    </LinearLayout>
+</ScrollView>

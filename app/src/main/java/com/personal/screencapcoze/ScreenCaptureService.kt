@@ -19,7 +19,6 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.*
-import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
 /**
@@ -44,19 +43,17 @@ class ScreenCaptureService : Service() {
         const val ACTION_START_CAPTURE = "com.personal.screencapcoze.START_CAPTURE"
         const val EXTRA_RESULT_CODE = "result_code"
         const val EXTRA_RESULT_DATA = "result_data"
-        const val EXTRA_NOTES = "notes"
 
         /** 通知 MainActivity 截图已完成 */
         const val ACTION_CAPTURE_DONE = "com.personal.screencapcoze.CAPTURE_DONE"
         const val EXTRA_SUCCESS = "success"
         const val EXTRA_ERROR_MSG = "error_msg"
 
-        fun startCapture(context: Context, resultCode: Int, resultData: Intent, notes: String = "") {
+        fun startCapture(context: Context, resultCode: Int, resultData: Intent) {
             val intent = Intent(context, ScreenCaptureService::class.java).apply {
                 action = ACTION_START_CAPTURE
                 putExtra(EXTRA_RESULT_CODE, resultCode)
                 putExtra(EXTRA_RESULT_DATA, resultData)
-                putExtra(EXTRA_NOTES, notes)
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
@@ -91,7 +88,6 @@ class ScreenCaptureService : Service() {
                 @Suppress("DEPRECATION")
                 intent.getParcelableExtra(EXTRA_RESULT_DATA)
             }
-            val notes = intent.getStringExtra(EXTRA_NOTES) ?: ""
 
             if (resultCode == 0 || resultData == null) {
                 Log.e(TAG, "Invalid MediaProjection authorization")
@@ -106,7 +102,7 @@ class ScreenCaptureService : Service() {
             // 开始截图流程
             serviceScope.launch {
                 try {
-                    captureAndUpload(resultCode, resultData, notes)
+                    captureAndUpload(resultCode, resultData)
                 } catch (e: Exception) {
                     Log.e(TAG, "Capture failed", e)
                     notifyError(e.message ?: "未知错误")
@@ -129,10 +125,8 @@ class ScreenCaptureService : Service() {
 
     /**
      * 截图并上传的核心流程
-     *
-     * @param notes 用户填写的备注，随截图一起作为 workflow 参数上传（可选）
      */
-    private suspend fun captureAndUpload(resultCode: Int, resultData: Intent, notes: String = "") {
+    private suspend fun captureAndUpload(resultCode: Int, resultData: Intent) {
         // Step 1: 获取 MediaProjection
         val projectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         mediaProjection = projectionManager.getMediaProjection(resultCode, resultData)
@@ -190,10 +184,18 @@ class ScreenCaptureService : Service() {
         image.close()
 
         val jpegBytes = bitmapToJpeg(bitmap)
-        Log.d(TAG, "JPEG size: ${jpegBytes.size} bytes")
+        bitmap.recycle()
+        Log.d(TAG, "JPEG size: ${jpegBytes.size} bytes (<= ${ImageCompressor.MAX_BYTES})")
+
+        // 保存预览图到私有缓存，供备注页展示
+        val previewUri = PreviewCache.save(this, jpegBytes)
 
         // 更新通知：上传中
         updateNotification(getString(R.string.notification_uploading))
+
+        // 截图后立刻弹出备注页：用户在后台上传期间即可填写备注，
+        // 待第一个工作流返回 title 后由 NoteCoordinator 自动触发第二个工作流
+        NoteActivity.start(this, previewUri?.toString())
 
         // Step 6: 上传到 Coze Workflow API
         Log.d(TAG, "Uploading to Coze Workflow API...")
@@ -207,14 +209,16 @@ class ScreenCaptureService : Service() {
         }
 
         val uploader = CozeUploader(accessToken, user)
-        val result = uploader.uploadImage(jpegBytes, notes)
+        val result = uploader.uploadImage(jpegBytes)
 
         if (result.isSuccess) {
             Log.d(TAG, "Upload successful! Response: ${result.responseText?.take(500)}")
-            notifyDone()
+            // 第一个工作流完成：通知协调器（若用户已填备注则自动触发第二个工作流）
+            NoteCoordinator.onUploadSuccess(this, result.title ?: "")
             broadcastResult(true, null)
         } else {
             Log.e(TAG, "Upload failed: ${result.errorMessage}")
+            NoteCoordinator.onUploadFailed(this)
             notifyError(result.errorMessage ?: "上传失败")
             broadcastResult(false, result.errorMessage)
         }
@@ -264,16 +268,13 @@ class ScreenCaptureService : Service() {
     }
 
     /**
-     * Bitmap -> JPEG byte array
+     * Bitmap -> JPEG byte array（压缩到 1MB 以下）
      *
-     * 使用 JPEG 格式压缩，质量 80%，比 PNG 体积小很多，
-     * base64 编码后传输更高效
+     * 委托给 ImageCompressor：优先降质量（85→55）保清晰度，
+     * 质量到底仍超 1MB 时才等比缩小分辨率。原 bitmap 由调用方回收。
      */
     private fun bitmapToJpeg(bitmap: Bitmap): ByteArray {
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
-        bitmap.recycle()
-        return stream.toByteArray()
+        return ImageCompressor.compress(bitmap)
     }
 
     private fun cleanup() {
