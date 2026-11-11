@@ -45,7 +45,8 @@ class ScreenCapTileService : TileService() {
 
         // 使用 startActivityAndCollapse 启动 Activity 并折叠控制面板。
         // 这是 TileService 推荐的方式，比直接 startActivity 更可靠。
-        val intent = Intent(this, MainActivity::class.java).apply {
+        // 点击控制中心后打开紧凑弹窗（PopupActivity），而非全屏主界面
+        val intent = Intent(this, PopupActivity::class.java).apply {
             action = ACTION_FROM_TILE
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }

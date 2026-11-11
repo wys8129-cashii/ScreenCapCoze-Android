@@ -19,4 +19,12 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+
+    <!-- 控制中心点击后的小弹窗：透明背景 + 居中卡片 -->
+    <style name="Theme.ScreenCapCoze.Popup" parent="Theme.ScreenCapCoze">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
 </resources>

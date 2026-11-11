@@ -54,4 +54,13 @@
     <!-- 门户网址 -->
     <string name="portal_label">管理后台</string>
     <string name="portal_url">https://sm42ps27mabdnv01fac5a.apigateway-cn-shanghai.volceapi.com/login.html</string>
+
+    <!-- 控制中心弹窗 -->
+    <string name="btn_popup_capture">📸 截图上传</string>
+    <string name="popup_settings">完整设置 ›</string>
+    <string name="popup_status_token">请先在设置中配置 Access Token</string>
+    <string name="popup_status_preparing">准备截图…</string>
+    <string name="popup_status_capturing">截图中…</string>
+    <string name="popup_status_denied">截图权限被拒绝</string>
+    <string name="popup_status_done">截图已上传到 Coze</string>
 </resources>
