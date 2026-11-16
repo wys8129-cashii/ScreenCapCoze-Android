@@ -49,7 +49,7 @@
     <string name="guide_step4">4. 下拉控制中心 → 点击「截图上传」即可</string>
     <string name="guide_step5">5. 可选：验证 API 连通性</string>
     <string name="guide_step6">6. 查看已上传的截图记录</string>
-    <string name="btn_open_portal">打开管理后台</string>
+    <string name="btn_open_portal">打开网页查看</string>
 
     <!-- 门户网址 -->
     <string name="portal_label">管理后台</string>

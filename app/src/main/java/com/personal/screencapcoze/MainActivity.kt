@@ -364,7 +364,7 @@ class MainActivity : AppCompatActivity() {
             append("发现新版本 v${info.versionName}\n")
             append("当前版本 v${Updater.currentVersionName(this@MainActivity)}\n\n")
             if (info.notes.isNotBlank()) {
-                append(info.notes.take(600))
+                append(stripMarkdown(info.notes).take(600))
             }
         }
         AlertDialog.Builder(this)
@@ -373,6 +373,20 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("立即更新") { _, _ -> startUpdateDownload(info) }
             .setNegativeButton("稍后", null)
             .show()
+    }
+
+    /** 去掉 Release 说明里的 Markdown 符号，弹窗只显示纯文本 */
+    private fun stripMarkdown(text: String): String {
+        return text
+            .replace(Regex("^#{1,6}\\s*", RegexOption.MULTILINE), "")
+            .replace("**", "")
+            .replace("__", "")
+            .replace(Regex("`+"), "")
+            .replace(Regex("^>\\s?", RegexOption.MULTILINE), "")
+            .replace(Regex("^[-*]\\s+", RegexOption.MULTILINE), "· ")
+            .replace(Regex("\\[(.+?)\\]\\(.+?\\)"), "$1")
+            .replace(Regex("\\n{3,}"), "\n\n")
+            .trim()
     }
 
     private fun startUpdateDownload(info: Updater.UpdateInfo) {
