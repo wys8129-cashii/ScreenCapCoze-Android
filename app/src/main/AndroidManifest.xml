@@ -34,6 +34,12 @@
             </intent-filter>
         </activity>
 
+        <!-- 截图相册：查看所有通过 App 截图保存的图片 -->
+        <activity
+            android:name=".GalleryActivity"
+            android:exported="false"
+            android:label="@string/gallery_title" />
+
         <!-- 控制中心图标点击后的小弹窗 -->
         <activity
             android:name=".PopupActivity"

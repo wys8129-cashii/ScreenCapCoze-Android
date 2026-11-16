@@ -29,6 +29,9 @@ class PopupActivity : AppCompatActivity() {
 
     companion object {
         const val REQUEST_MEDIA_PROJECTION = 2001
+
+        /** 带此 extra 打开时自动触发截图（AI 键 / 快捷服务入口） */
+        const val EXTRA_AUTO_CAPTURE = "auto_capture"
     }
 
     private lateinit var tvStatus: TextView
@@ -48,9 +51,15 @@ class PopupActivity : AppCompatActivity() {
         findViewById<View>(R.id.popupScrim).setOnClickListener { finish() }
         // 关闭按钮
         findViewById<View>(R.id.btnPopupClose).setOnClickListener { finish() }
-        // 跳转到完整设置页
+        // 跳转到截图相册
+        findViewById<View>(R.id.tvPopupGallery).setOnClickListener {
+            startActivity(Intent(this, GalleryActivity::class.java))
+        }
+        // 跳转到完整设置页（告诉主界面不要自动路由回弹窗，避免死循环）
         findViewById<View>(R.id.tvPopupSettings).setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            val i = Intent(this, MainActivity::class.java)
+            i.putExtra(MainActivity.EXTRA_NO_AUTO_ROUTE, true)
+            startActivity(i)
             finish()
         }
 
@@ -90,6 +99,11 @@ class PopupActivity : AppCompatActivity() {
                 captureDoneReceiver,
                 IntentFilter(ScreenCaptureService.ACTION_CAPTURE_DONE)
             )
+        }
+
+        // AI 键 / 快捷服务启动：自动触发截图（等视图就绪后再执行）
+        if (intent?.getBooleanExtra(EXTRA_AUTO_CAPTURE, false) == true) {
+            btnCapture.post { btnCapture.performClick() }
         }
     }
 

@@ -80,16 +80,41 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="14sp" />
 
-            <!-- 设置链接 -->
-            <TextView
-                android:id="@+id/tvPopupSettings"
+            <!-- 相册 / 设置 链接 -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:gravity="center"
-                android:text="@string/popup_settings"
-                android:textColor="@color/brand_primary"
-                android:textSize="13sp" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvPopupGallery"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/btn_gallery"
+                    android:textColor="@color/brand_primary"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="|"
+                    android:textColor="@color/card_stroke"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tvPopupSettings"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/popup_settings"
+                    android:textColor="@color/brand_primary"
+                    android:textSize="13sp" />
+            </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </FrameLayout>

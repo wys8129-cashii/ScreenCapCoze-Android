@@ -63,4 +63,13 @@
     <string name="popup_status_capturing">截图中…</string>
     <string name="popup_status_denied">截图权限被拒绝</string>
     <string name="popup_status_done">截图已上传到 Coze</string>
+
+    <!-- 截图相册 -->
+    <string name="gallery_title">截图相册</string>
+    <string name="gallery_count">%1$d 张截图</string>
+    <string name="btn_gallery">截图相册</string>
+
+    <!-- 启动路由 -->
+    <string name="extra_no_auto_route">no_auto_route</string>
+    <string name="extra_auto_capture">auto_capture</string>
 </resources>

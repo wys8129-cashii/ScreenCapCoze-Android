@@ -48,6 +48,9 @@ class MainActivity : AppCompatActivity() {
         private const val TAG = "MainActivity"
         const val REQUEST_MEDIA_PROJECTION = 1001
         const val REQUEST_READ_MEDIA_IMAGES = 1002
+
+        /** 带此 extra 打开时，不执行「已配置→自动跳转小弹窗」的路由（如从通知、弹窗设置页进入） */
+        const val EXTRA_NO_AUTO_ROUTE = "no_auto_route"
     }
 
     private var isFromTile = false
@@ -115,6 +118,11 @@ class MainActivity : AppCompatActivity() {
             requestMediaProjection()
         }
 
+        // 截图相册 -> 查看所有通过 App 截图保存的图片
+        findViewById<MaterialButton>(R.id.btnGallery).setOnClickListener {
+            startActivity(Intent(this, GalleryActivity::class.java))
+        }
+
         // 检查更新入口（手动）
         val btnCheckUpdate = findViewById<TextView>(R.id.btnCheckUpdate)
         btnCheckUpdate.text = "检查更新 · 当前 v${Updater.currentVersionName(this)}"
@@ -171,8 +179,28 @@ class MainActivity : AppCompatActivity() {
                 val prefs = getSharedPreferences("coze_config", Context.MODE_PRIVATE)
                 val hasConfig = prefs.getString("coze_access_token", "")?.isNotEmpty() == true
                 btnTestCapture.visibility = if (hasConfig) android.view.View.VISIBLE else android.view.View.GONE
-                // 正常启动时静默检查一次更新
-                checkForUpdate(manual = false)
+
+                val noAutoRoute = intent?.getBooleanExtra(EXTRA_NO_AUTO_ROUTE, false) == true
+                if (hasConfig && !noAutoRoute) {
+                    // 外部快捷启动（荣耀 AI 键 / 快捷服务 / 桌面图标）：
+                    // 先静默检查更新（有更新则留在本页弹更新框），否则跳转小弹窗并自动开始截图
+                    observerScope.launch {
+                        val info = Updater.checkForUpdate(this@MainActivity)
+                        if (info != null) {
+                            showUpdateDialog(info)
+                        } else {
+                            val popup = Intent(this@MainActivity, PopupActivity::class.java).apply {
+                                putExtra(PopupActivity.EXTRA_AUTO_CAPTURE, true)
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            }
+                            startActivity(popup)
+                            finish()
+                        }
+                    }
+                } else {
+                    // 从弹窗设置页 / 通知进入，或尚未配置 Token：正常显示主界面并检查更新
+                    checkForUpdate(manual = false)
+                }
             }
         }
     }

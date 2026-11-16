@@ -190,6 +190,10 @@ class ScreenCaptureService : Service() {
         // 保存预览图到私有缓存，供备注页展示
         val previewUri = PreviewCache.save(this, jpegBytes)
 
+        // 同时保存一份到本地截图相册（不影响上传主流程）
+        val savedUri = ScreenshotStore.save(this, jpegBytes)
+        Log.d(TAG, "Screenshot saved locally: $savedUri")
+
         // 更新通知：上传中
         updateNotification(getString(R.string.notification_uploading))
 
@@ -303,7 +307,10 @@ class ScreenCaptureService : Service() {
     }
 
     private fun buildNotification(text: String): Notification {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java).apply {
+            // 从通知打开主界面：不触发「自动跳转小弹窗」路由
+            putExtra(MainActivity.EXTRA_NO_AUTO_ROUTE, true)
+        }
         val pendingIntent = PendingIntent.getActivity(
             this, 0, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
