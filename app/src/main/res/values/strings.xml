@@ -18,14 +18,14 @@
     <string name="notification_channel_name">截图上传服务</string>
     <string name="notification_title">截图上传</string>
     <string name="notification_capturing">正在截图…</string>
-    <string name="notification_uploading">正在上传到 Coze…</string>
-    <string name="notification_done">截图已上传到 Coze</string>
+    <string name="notification_uploading">正在上传到 foubow…</string>
+    <string name="notification_done">截图已上传到 foubow</string>
     <string name="notification_error">上传失败</string>
     <string name="default_coze_api_url">https://api.coze.cn</string>
 
     <!-- 截图备注（首页/分享页已弃用，备注改为上传后填写） -->
     <string name="notes_label">截图备注（可选）</string>
-    <string name="notes_hint">可填写备注，随截图一起上传到 Coze，多行</string>
+    <string name="notes_hint">可填写备注，随截图一起上传到 foubow，多行</string>
 
     <!-- 备注页（上传完成后填写并保存到第二个工作流） -->
     <string name="note_label">备注（可选）</string>
@@ -62,7 +62,7 @@
     <string name="popup_status_preparing">准备截图…</string>
     <string name="popup_status_capturing">截图中…</string>
     <string name="popup_status_denied">截图权限被拒绝</string>
-    <string name="popup_status_done">截图已上传到 Coze</string>
+    <string name="popup_status_done">截图已上传到 foubow</string>
 
     <!-- 截图相册 -->
     <string name="gallery_title">截图相册</string>
@@ -75,6 +75,6 @@
 
     <!-- 桌面长按图标快捷方式 -->
     <string name="shortcut_capture">截图上传</string>
-    <string name="shortcut_capture_long">截图上传 · 一键截图到 Coze</string>
+    <string name="shortcut_capture_long">截图上传 · 一键截图到 foubow</string>
     <string name="shortcut_gallery_long">查看截图相册</string>
 </resources>

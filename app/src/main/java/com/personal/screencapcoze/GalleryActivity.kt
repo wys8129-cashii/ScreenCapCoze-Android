@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -40,6 +39,8 @@ class GalleryActivity : AppCompatActivity() {
         private val items: List<Pair<Uri, String>>
     ) : RecyclerView.Adapter<GalleryAdapter.Holder>() {
 
+        val uris: List<Pair<Uri, String>> get() = items
+
         inner class Holder(view: View) : RecyclerView.ViewHolder(view) {
             val iv: ImageView = view.findViewById(R.id.itemImage)
         }
@@ -65,7 +66,9 @@ class GalleryActivity : AppCompatActivity() {
                 }
             }.start()
             holder.iv.setOnClickListener {
-                Toast.makeText(this@GalleryActivity, name, Toast.LENGTH_SHORT).show()
+                ImageViewerActivity.start(
+                    this@GalleryActivity, items, holder.bindingAdapterPosition
+                )
             }
         }
 

@@ -45,6 +45,12 @@
             android:exported="false"
             android:label="@string/gallery_title" />
 
+        <!-- 全屏大图查看器：相册点击进入 -->
+        <activity
+            android:name=".ImageViewerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ScreenCapCoze" />
+
         <!-- 控制中心图标点击后的小弹窗 -->
         <activity
             android:name=".PopupActivity"
