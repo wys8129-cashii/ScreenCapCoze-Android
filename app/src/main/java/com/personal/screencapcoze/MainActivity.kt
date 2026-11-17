@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvStatus: TextView
     private lateinit var tvResult: TextView
     private lateinit var btnTestCapture: MaterialButton
+    private lateinit var noteCard: NoteCardController
     private lateinit var mediaProjectionManager: MediaProjectionManager
 
     // 监听系统截图
@@ -66,8 +67,15 @@ class MainActivity : AppCompatActivity() {
     /** 接收截图完成广播 */
     private val captureDoneReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == ScreenCaptureService.ACTION_UPLOAD_STARTED) {
+                noteCard.onUploadStarted(
+                    intent.getStringExtra(ScreenCaptureService.EXTRA_PREVIEW_URI)
+                )
+                return
+            }
             val success = intent?.getBooleanExtra(ScreenCaptureService.EXTRA_SUCCESS, false) ?: false
             val errorMsg = intent?.getStringExtra(ScreenCaptureService.EXTRA_ERROR_MSG) ?: ""
+            noteCard.onUploadDone(success, errorMsg)
 
             if (success) {
                 tvStatus.text = getString(R.string.status_done)
@@ -93,6 +101,7 @@ class MainActivity : AppCompatActivity() {
         tvStatus = findViewById(R.id.tvStatus)
         tvResult = findViewById(R.id.tvResult)
         btnTestCapture = findViewById(R.id.btnTestCapture)
+        noteCard = NoteCardController(this)
 
         val btnAuthorize = findViewById<MaterialButton>(R.id.btnAuthorize)
         val btnSettings = findViewById<MaterialButton>(R.id.btnSettings)
@@ -100,6 +109,7 @@ class MainActivity : AppCompatActivity() {
 
         // 授权按钮 -> 弹出 MediaProjection 授权对话框
         btnAuthorize.setOnClickListener {
+            noteCard.resetForNewCapture()
             requestMediaProjection()
         }
 
@@ -115,6 +125,7 @@ class MainActivity : AppCompatActivity() {
 
         // 测试截图按钮 -> 手动触发截图（需先授权）
         btnTestCapture.setOnClickListener {
+            noteCard.resetForNewCapture()
             requestMediaProjection()
         }
 
@@ -141,11 +152,17 @@ class MainActivity : AppCompatActivity() {
         // 注册截图完成广播
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(captureDoneReceiver,
-                IntentFilter(ScreenCaptureService.ACTION_CAPTURE_DONE),
+                IntentFilter().apply {
+                    addAction(ScreenCaptureService.ACTION_CAPTURE_DONE)
+                    addAction(ScreenCaptureService.ACTION_UPLOAD_STARTED)
+                },
                 Context.RECEIVER_NOT_EXPORTED)
         } else {
             registerReceiver(captureDoneReceiver,
-                IntentFilter(ScreenCaptureService.ACTION_CAPTURE_DONE))
+                IntentFilter().apply {
+                    addAction(ScreenCaptureService.ACTION_CAPTURE_DONE)
+                    addAction(ScreenCaptureService.ACTION_UPLOAD_STARTED)
+                })
         }
 
         // 注册系统截图监听

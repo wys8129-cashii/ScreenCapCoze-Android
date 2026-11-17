@@ -36,6 +36,7 @@ class PopupActivity : AppCompatActivity() {
 
     private lateinit var tvStatus: TextView
     private lateinit var btnCapture: MaterialButton
+    private lateinit var noteCard: NoteCardController
     private lateinit var captureDoneReceiver: BroadcastReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +47,7 @@ class PopupActivity : AppCompatActivity() {
 
         tvStatus = findViewById(R.id.tvPopupStatus)
         btnCapture = findViewById(R.id.btnPopupCapture)
+        noteCard = NoteCardController(this)
 
         // 点击背景遮罩（弹窗外部）关闭
         findViewById<View>(R.id.popupScrim).setOnClickListener { finish() }
@@ -72,32 +74,50 @@ class PopupActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             setStatus(getString(R.string.popup_status_preparing), R.color.text_secondary)
+            noteCard.resetForNewCapture()
             requestMediaProjection()
         }
 
         // 监听截图完成广播
         captureDoneReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                val success =
-                    intent?.getBooleanExtra(ScreenCaptureService.EXTRA_SUCCESS, false) ?: false
-                val errorMsg = intent?.getStringExtra(ScreenCaptureService.EXTRA_ERROR_MSG) ?: ""
-                if (success) {
-                    setStatus(getString(R.string.popup_status_done), R.color.status_active)
-                } else {
-                    setStatus("出错：$errorMsg", R.color.status_error)
+                when (intent?.action) {
+                    ScreenCaptureService.ACTION_UPLOAD_STARTED -> {
+                        noteCard.onUploadStarted(
+                            intent.getStringExtra(ScreenCaptureService.EXTRA_PREVIEW_URI)
+                        )
+                    }
+                    ScreenCaptureService.ACTION_CAPTURE_DONE -> {
+                        val success =
+                            intent.getBooleanExtra(ScreenCaptureService.EXTRA_SUCCESS, false)
+                        val errorMsg =
+                            intent.getStringExtra(ScreenCaptureService.EXTRA_ERROR_MSG) ?: ""
+                        noteCard.onUploadDone(success, errorMsg)
+                        if (success) {
+                            setStatus(getString(R.string.popup_status_done), R.color.status_active)
+                        } else {
+                            setStatus("出错：$errorMsg", R.color.status_error)
+                        }
+                    }
                 }
             }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(
                 captureDoneReceiver,
-                IntentFilter(ScreenCaptureService.ACTION_CAPTURE_DONE),
+                IntentFilter().apply {
+                    addAction(ScreenCaptureService.ACTION_CAPTURE_DONE)
+                    addAction(ScreenCaptureService.ACTION_UPLOAD_STARTED)
+                },
                 Context.RECEIVER_NOT_EXPORTED
             )
         } else {
             registerReceiver(
                 captureDoneReceiver,
-                IntentFilter(ScreenCaptureService.ACTION_CAPTURE_DONE)
+                IntentFilter().apply {
+                    addAction(ScreenCaptureService.ACTION_CAPTURE_DONE)
+                    addAction(ScreenCaptureService.ACTION_UPLOAD_STARTED)
+                }
             )
         }
 

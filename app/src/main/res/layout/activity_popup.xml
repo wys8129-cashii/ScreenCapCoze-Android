@@ -80,6 +80,9 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="14sp" />
 
+            <!-- 备注卡片：与弹窗同页，上传期间直接填写，不切换页面 -->
+            <include layout="@layout/view_note_card" />
+
             <!-- 相册 / 设置 链接 -->
             <LinearLayout
                 android:layout_width="match_parent"

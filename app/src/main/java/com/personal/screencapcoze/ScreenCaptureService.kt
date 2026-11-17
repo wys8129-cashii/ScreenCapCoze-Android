@@ -49,6 +49,10 @@ class ScreenCaptureService : Service() {
         const val EXTRA_SUCCESS = "success"
         const val EXTRA_ERROR_MSG = "error_msg"
 
+        /** 上传开始广播：携带预览图 URI，供弹窗/首页的备注卡片展示 */
+        const val ACTION_UPLOAD_STARTED = "com.personal.screencapcoze.UPLOAD_STARTED"
+        const val EXTRA_PREVIEW_URI = "preview_uri"
+
         fun startCapture(context: Context, resultCode: Int, resultData: Intent) {
             val intent = Intent(context, ScreenCaptureService::class.java).apply {
                 action = ACTION_START_CAPTURE
@@ -194,12 +198,11 @@ class ScreenCaptureService : Service() {
         val savedUri = ScreenshotStore.save(this, jpegBytes)
         Log.d(TAG, "Screenshot saved locally: $savedUri")
 
+        // 通知弹窗/首页的备注卡片：上传开始（备注在页面内填写，不再弹独立页面）
+        broadcastUploadStarted(previewUri?.toString())
+
         // 更新通知：上传中
         updateNotification(getString(R.string.notification_uploading))
-
-        // 截图后立刻弹出备注页：用户在后台上传期间即可填写备注，
-        // 待第一个工作流返回 title 后由 NoteCoordinator 自动触发第二个工作流
-        NoteActivity.start(this, previewUri?.toString())
 
         // Step 6: 上传到 Coze Workflow API
         Log.d(TAG, "Uploading to Coze Workflow API...")
@@ -349,6 +352,14 @@ class ScreenCaptureService : Service() {
             .build()
         notificationManager.notify(NOTIFICATION_ID, notification)
         broadcastResult(false, msg)
+    }
+
+    private fun broadcastUploadStarted(previewUri: String?) {
+        val intent = Intent(ACTION_UPLOAD_STARTED).apply {
+            putExtra(EXTRA_PREVIEW_URI, previewUri ?: "")
+            setPackage(packageName)
+        }
+        sendBroadcast(intent)
     }
 
     private fun broadcastResult(success: Boolean, errorMsg: String?) {
