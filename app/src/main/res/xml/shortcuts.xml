@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 桌面长按图标快捷方式：无需厂商审核，系统级入口 -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:shortcutId="capture_upload"
+        android:enabled="true"
+        android:icon="@drawable/ic_braces"
+        android:shortcutShortLabel="@string/shortcut_capture"
+        android:shortcutLongLabel="@string/shortcut_capture_long">
+        <intent
+            android:action="com.personal.screencapcoze.SHORTCUT_CAPTURE"
+            android:targetPackage="com.personal.screencapcoze"
+            android:targetClass="com.personal.screencapcoze.PopupActivity" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="open_gallery"
+        android:enabled="true"
+        android:icon="@drawable/ic_screenshot"
+        android:shortcutShortLabel="@string/btn_gallery"
+        android:shortcutLongLabel="@string/shortcut_gallery_long">
+        <intent
+            android:action="com.personal.screencapcoze.SHORTCUT_GALLERY"
+            android:targetPackage="com.personal.screencapcoze"
+            android:targetClass="com.personal.screencapcoze.GalleryActivity" />
+    </shortcut>
+</shortcuts>

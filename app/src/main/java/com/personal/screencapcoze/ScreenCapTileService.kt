@@ -48,6 +48,8 @@ class ScreenCapTileService : TileService() {
         // 点击控制中心后打开紧凑弹窗（PopupActivity），而非全屏主界面
         val intent = Intent(this, PopupActivity::class.java).apply {
             action = ACTION_FROM_TILE
+            // 点击图标直接开始截图，无需再点弹窗内的按钮
+            putExtra(PopupActivity.EXTRA_AUTO_CAPTURE, true)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
 

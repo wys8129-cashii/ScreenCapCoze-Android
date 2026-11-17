@@ -32,6 +32,9 @@ class PopupActivity : AppCompatActivity() {
 
         /** 带此 extra 打开时自动触发截图（AI 键 / 快捷服务入口） */
         const val EXTRA_AUTO_CAPTURE = "auto_capture"
+
+        /** 桌面长按快捷方式 / DeepLink 的动作，同样自动触发截图 */
+        const val ACTION_SHORTCUT_CAPTURE = "com.personal.screencapcoze.SHORTCUT_CAPTURE"
     }
 
     private lateinit var tvStatus: TextView
@@ -121,8 +124,11 @@ class PopupActivity : AppCompatActivity() {
             )
         }
 
-        // AI 键 / 快捷服务启动：自动触发截图（等视图就绪后再执行）
-        if (intent?.getBooleanExtra(EXTRA_AUTO_CAPTURE, false) == true) {
+        // AI 键 / 快捷服务 / 桌面快捷方式 / DeepLink 启动：自动触发截图（等视图就绪后再执行）
+        val autoCapture = intent?.getBooleanExtra(EXTRA_AUTO_CAPTURE, false) == true ||
+                intent?.action == ACTION_SHORTCUT_CAPTURE ||
+                intent?.action == Intent.ACTION_VIEW
+        if (autoCapture) {
             btnCapture.post { btnCapture.performClick() }
         }
     }

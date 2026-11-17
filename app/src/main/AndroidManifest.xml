@@ -23,6 +23,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ScreenCapCoze">
 
+        <!-- 桌面长按图标快捷方式（截图上传 / 截图相册） -->
+        <meta-data
+            android:name="android.app.shortcuts"
+            android:resource="@xml/shortcuts" />
+
         <!-- 主 Activity：首次授权和完整配置（桌面启动入口） -->
         <activity
             android:name=".MainActivity"
@@ -49,7 +54,15 @@
             android:theme="@style/Theme.ScreenCapCoze.Popup">
             <intent-filter>
                 <action android:name="com.personal.screencapcoze.FROM_TILE" />
+                <action android:name="com.personal.screencapcoze.SHORTCUT_CAPTURE" />
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!-- DeepLink：荣耀智慧服务/快捷服务接入用（screencapcoze://capture） -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="screencapcoze" android:host="capture" />
             </intent-filter>
         </activity>
 

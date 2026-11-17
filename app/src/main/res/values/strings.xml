@@ -72,4 +72,9 @@
     <!-- 启动路由 -->
     <string name="extra_no_auto_route">no_auto_route</string>
     <string name="extra_auto_capture">auto_capture</string>
+
+    <!-- 桌面长按图标快捷方式 -->
+    <string name="shortcut_capture">截图上传</string>
+    <string name="shortcut_capture_long">截图上传 · 一键截图到 Coze</string>
+    <string name="shortcut_gallery_long">查看截图相册</string>
 </resources>
